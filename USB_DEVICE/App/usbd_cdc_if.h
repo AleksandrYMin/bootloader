@@ -72,11 +72,7 @@
    USB_CDC_RX_BUFFER_NO_DATA
  } USB_CDC_RX_BUFFER_StatusTypeDef;
 
-struct uartdata{
-	uint8_t data[2];
-	uint16_t offset;
-	uint16_t size;
-}uartdata;
+
 /* USER CODE END EXPORTED_TYPES */
 
 /**

@@ -8,24 +8,22 @@
 
 static FLASH_EraseInitTypeDef EraseInitStruct;
 uint32_t GetSector(uint32_t Address);
-uint32_t FirstSector = 0, NbOfSectors = 0, Address = 0;
-uint32_t SectorError = 0;
-__IO uint32_t data32 = 0 , MemoryProgramStatus = 0;
 
 void WriteDeviceAddress(char* data, int size)
 {
 	HAL_FLASH_Unlock();
 
 	/* Get the 1st sector to erase */
-	FirstSector = GetSector(FLASH_USER_START_ADDR);
+	uint32_t FirstSector = GetSector(FLASH_USER_START_ADDR);
 	/* Get the number of sector to erase from 1st sector*/
-	NbOfSectors = GetSector(FLASH_USER_END_ADDR) - FirstSector + 1;
+	uint32_t NbOfSectors = GetSector(FLASH_USER_END_ADDR) - FirstSector + 1;
 
 	/* Fill EraseInit structure*/
 	EraseInitStruct.TypeErase = FLASH_TYPEERASE_SECTORS;
 	EraseInitStruct.VoltageRange = FLASH_VOLTAGE_RANGE_3;
 	EraseInitStruct.Sector = FirstSector;
 	EraseInitStruct.NbSectors = NbOfSectors;
+	uint32_t SectorError = 0;
 	if(HAL_FLASHEx_Erase(&EraseInitStruct, &SectorError) != HAL_OK)
 	{
 		/*
@@ -52,7 +50,7 @@ void WriteDeviceAddress(char* data, int size)
 	__HAL_FLASH_INSTRUCTION_CACHE_ENABLE();
 	__HAL_FLASH_DATA_CACHE_ENABLE();
 
-	Address = FLASH_USER_START_ADDR;
+	uint32_t Address = FLASH_USER_START_ADDR;
 
 	for (int i = 0; i<size; i++){
 		if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_BYTE, Address+i, data[i]) != HAL_OK){
@@ -74,26 +72,12 @@ void CopyData(size_t destStartAddr, size_t srcStartAddr,const size_t srcEndAddr)
 {
 	HAL_FLASH_Unlock();
 
-//	/* Note: If an erase operation in Flash memory also concerns data in the data or instruction cache,
-//	 you have to make sure that these data are rewritten before they are accessed during code
-//	 execution. If this cannot be done safely, it is recommended to flush the caches by setting the
-//	 DCRST and ICRST bits in the FLASH_CR register. */
-//	__HAL_FLASH_DATA_CACHE_DISABLE();
-//	__HAL_FLASH_INSTRUCTION_CACHE_DISABLE();
-//
-//	__HAL_FLASH_DATA_CACHE_RESET();
-//	__HAL_FLASH_INSTRUCTION_CACHE_RESET();
-//
-//	__HAL_FLASH_INSTRUCTION_CACHE_ENABLE();
-//	__HAL_FLASH_DATA_CACHE_ENABLE();
-
-	Address = FLASH_USER_START_ADDR;
-
 	size_t dst = destStartAddr;
 	size_t src = srcStartAddr;
 
 	while ((size_t)src<srcEndAddr){
 		uint32_t data = *(__IO uint32_t*)(src);
+
 		if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, dst, data) != HAL_OK){
 
 		  /* Error occurred while writing data in Flash memory.
@@ -116,15 +100,16 @@ uint8_t clearFlash(uint32_t startAddr, uint32_t endAddr){
 	HAL_FLASH_Unlock();
 
 	/* Get the 1st sector to erase */
-	FirstSector = GetSector(startAddr);
+	uint32_t FirstSector = GetSector(startAddr);
 	/* Get the number of sector to erase from 1st sector*/
-	NbOfSectors = GetSector(endAddr) - FirstSector + 1;
+	uint32_t NbOfSectors = GetSector(endAddr) - FirstSector + 1;
 
 	/* Fill EraseInit structure*/
 	EraseInitStruct.TypeErase = FLASH_TYPEERASE_SECTORS;
 	EraseInitStruct.VoltageRange = FLASH_VOLTAGE_RANGE_3;
 	EraseInitStruct.Sector = FirstSector;
 	EraseInitStruct.NbSectors = NbOfSectors;
+	uint32_t SectorError = 0;
 	if(HAL_FLASHEx_Erase(&EraseInitStruct, &SectorError) != HAL_OK)
 	{
 		/*
@@ -145,20 +130,8 @@ uint8_t clearFlash(uint32_t startAddr, uint32_t endAddr){
 int WriteDeviceAddressOffset(char* data, int size, int offset)
 {
 	HAL_FLASH_Unlock();
-	/* Note: If an erase operation in Flash memory also concerns data in the data or instruction cache,
-	 you have to make sure that these data are rewritten before they are accessed during code
-	 execution. If this cannot be done safely, it is recommended to flush the caches by setting the
-	 DCRST and ICRST bits in the FLASH_CR register. */
-	__HAL_FLASH_DATA_CACHE_DISABLE();
-	__HAL_FLASH_INSTRUCTION_CACHE_DISABLE();
 
-	__HAL_FLASH_DATA_CACHE_RESET();
-	__HAL_FLASH_INSTRUCTION_CACHE_RESET();
-
-	__HAL_FLASH_INSTRUCTION_CACHE_ENABLE();
-	__HAL_FLASH_DATA_CACHE_ENABLE();
-
-	Address = FLASH_USER_START_ADDR+offset;
+	uint32_t Address = APP_FLASH_FIRST_PAGE_ADDRESS+offset;
 
 	for (int i = 0; i<size; i++){
 		if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_BYTE, Address+i, data[i]) != HAL_OK){
@@ -179,7 +152,7 @@ int WriteDeviceAddressOffset(char* data, int size, int offset)
 
 void ReadDeviceAddressOffset(char* Dout, int size, int offset)
 {
-	Address = FLASH_USER_START_ADDR+offset;
+	uint32_t Address = FLASH_USER_START_ADDR+offset;
 
 	for (int i = 0; i<size; i++){
 		Dout[i] = *(__IO char*)(Address+i);
@@ -188,7 +161,7 @@ void ReadDeviceAddressOffset(char* Dout, int size, int offset)
 
 void ReadDeviceAddress(char* Dout, int size)
 {
-	Address = FLASH_USER_START_ADDR;
+	uint32_t Address = FLASH_USER_START_ADDR;
 
 	for (int i = 0; i<size; i++){
 		Dout[i] = *(__IO char*)(Address+i);

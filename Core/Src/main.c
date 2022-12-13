@@ -535,7 +535,7 @@ static xmodem_status xmodem_handle_packet(uint8_t header)
   /* If it is the first packet, then erase the memory. */
   if ((X_OK == status) && (FALSE == x_first_packet_received))
   {
-    if (FLASH_OK == clearFlash(FLASH_USER_START_ADDR, FLASH_USER_END_ADDR))
+    if (FLASH_OK == clearFlash(APP_FLASH_FIRST_PAGE_ADDRESS, FLASH_USER_START_ADDR-1))
     {
       x_first_packet_received = TRUE;
     }
@@ -567,7 +567,7 @@ static xmodem_status xmodem_handle_packet(uint8_t header)
   }
 
     /* Do the actual flashing (if there weren't any errors). */
-    if ((X_OK == status) && (FLASH_OK != WriteDeviceAddressOffset((char*)&received_packet_data[0u], size, xmodem_actual_flash_address-FLASH_USER_START_ADDR)))
+    if ((X_OK == status) && (FLASH_OK != WriteDeviceAddressOffset((char*)&received_packet_data[0u], size, xmodem_actual_flash_address-APP_FLASH_FIRST_PAGE_ADDRESS)))
     {
       /* Flashing error. */
       status |= X_ERROR_FLASH;

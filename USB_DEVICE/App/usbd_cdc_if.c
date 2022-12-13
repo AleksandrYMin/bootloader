@@ -97,6 +97,11 @@ uint8_t UserRxBufferFS[APP_RX_DATA_SIZE];
 uint8_t UserTxBufferFS[APP_TX_DATA_SIZE];
 
 /* USER CODE BEGIN PRIVATE_VARIABLES */
+struct uartdata{
+	uint8_t data[2];
+	uint16_t offset;
+	uint16_t size;
+}uartdata;
 uint8_t lcBuffer[7]; // Line coding buffer
 uint8_t rxBuffer[HL_RX_BUFFER_SIZE]; // Receive buffer
 volatile uint16_t rxBufferHeadPos = 0; // Receive buffer write position
